@@ -1,0 +1,44 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  image: string;
+  canonicalURL: URL;
+  noIndex?: boolean;
+}
+
+const { title, description, image, canonicalURL, noIndex } = Astro.props;
+
+const siteTitle = 'MedQ-Deg';
+const fullTitle = title === siteTitle ? siteTitle : `${title} | ${siteTitle}`;
+---
+
+<!-- General -->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="canonical" href={canonicalURL} />
+
+<!-- SEO -->
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<meta name="generator" content={Astro.generator} />
+
+{noIndex && <meta name="robots" content="noindex, nofollow" />}
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={image} />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={canonicalURL} />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={image} />
+
+<!-- Preconnect -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

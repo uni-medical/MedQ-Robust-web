@@ -1,0 +1,231 @@
+---
+import Layout from '@layouts/Layout.astro';
+import { SITE_CONFIG, CATEGORIES, DEGRADATION_TYPES, CONTRIBUTIONS, PAGE_LAYOUTS } from '@data/config';
+
+// Get layout config
+const heroLayout = PAGE_LAYOUTS.home.hero;
+const statsLayout = PAGE_LAYOUTS.home.stats;
+const contributionsLayout = PAGE_LAYOUTS.home.contributions;
+---
+
+<Layout title={SITE_CONFIG.title} description={SITE_CONFIG.description}>
+  <!-- Hero Section -->
+  <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- Background gradient -->
+    <div class="absolute inset-0 bg-gradient-to-b from-primary-950/20 via-surface-950 to-surface-950"></div>
+
+    <!-- Animated background elements -->
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl animate-pulse"></div>
+      <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent-500/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+    </div>
+
+    <div class="container-custom relative z-10 text-center">
+      <!-- Badge -->
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8 animate-on-scroll">
+        <span class="w-2 h-2 rounded-full bg-accent-400 animate-pulse"></span>
+        <span class="text-sm text-surface-300">First Open-Set Medical Degradation Benchmark</span>
+      </div>
+
+      <!-- Title -->
+      <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 animate-on-scroll" style="animation-delay: 100ms;">
+        <span class="gradient-text">MedQ-Deg</span>
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="text-xl sm:text-2xl text-surface-400 max-w-3xl mx-auto mb-8 animate-on-scroll" style="animation-delay: 200ms;">
+        {SITE_CONFIG.subtitle}
+      </p>
+
+      <!-- Stats -->
+      <div class="flex flex-wrap justify-center gap-6 sm:gap-8 mb-12 animate-on-scroll" style="animation-delay: 300ms;">
+        <div class="text-center">
+          <div class="text-4xl sm:text-5xl font-bold text-primary-400">{SITE_CONFIG.stats.categories}</div>
+          <div class="text-sm text-surface-500">Categories</div>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl sm:text-5xl font-bold text-accent-400">{SITE_CONFIG.stats.types}</div>
+          <div class="text-sm text-surface-500">Degradation Types</div>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl sm:text-5xl font-bold text-primary-400">{SITE_CONFIG.stats.datasets}</div>
+          <div class="text-sm text-surface-500">Datasets</div>
+        </div>
+      </div>
+
+      <!-- CTA Buttons -->
+      <div class="flex flex-wrap justify-center gap-4 animate-on-scroll" style="animation-delay: 400ms;">
+        <a href={SITE_CONFIG.links.paper} class="btn btn-primary text-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Read Paper
+        </a>
+        <a href={SITE_CONFIG.links.github} class="btn btn-secondary text-lg">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+          </svg>
+          GitHub
+        </a>
+        <a href="/benchmark" class="btn btn-ghost text-lg">
+          Explore Benchmark
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+      <svg class="w-6 h-6 text-surface-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+      </svg>
+    </div>
+  </section>
+
+  <!-- Categories Overview Section -->
+  <section class="section bg-surface-900/50">
+    <div class="container-custom">
+      <div class="text-center mb-16 animate-on-scroll">
+        <h2 class="text-3xl sm:text-4xl font-bold mb-4">Degradation Categories</h2>
+        <p class="text-surface-400 max-w-2xl mx-auto">
+          Medical images suffer from various types of degradation. Our benchmark covers 6 major categories with 28 specific degradation types.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {CATEGORIES.map((category, index) => (
+          <a
+            href={`/benchmark?category=${category.id}`}
+            class="card-interactive group animate-on-scroll"
+            style={`animation-delay: ${index * 50}ms;`}
+          >
+            <div class="w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center transition-transform group-hover:scale-110"
+                 style={`background: ${category.color}20; color: ${category.color};`}>
+              <span class="text-2xl">
+                {category.icon === 'blur_on' && '◐'}
+                {category.icon === 'grain' && '▥'}
+                {category.icon === 'warning' && '⚠'}
+                {category.icon === 'brightness_6' && '◑'}
+                {category.icon === 'compress' && '⤢'}
+                {category.icon === 'more_horiz' && '⋯'}
+              </span>
+            </div>
+            <h3 class="font-semibold text-center mb-1 group-hover:text-primary-400 transition-colors">
+              {category.name}
+            </h3>
+            <p class="text-sm text-surface-500 text-center">
+              {category.nameZh}
+            </p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Contributions Section -->
+  <section class="section">
+    <div class="container-custom">
+      <div class="text-center mb-16 animate-on-scroll">
+        <h2 class="text-3xl sm:text-4xl font-bold mb-4">Key Contributions</h2>
+        <p class="text-surface-400 max-w-2xl mx-auto">
+          We propose a comprehensive benchmark and novel methods for medical image degradation recognition.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        {CONTRIBUTIONS.map((contribution, index) => (
+          <a
+            href={contribution.link}
+            class="card-interactive group animate-on-scroll"
+            style={`animation-delay: ${index * 100}ms;`}
+          >
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500/20 to-accent-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <span class="text-3xl">
+                {contribution.icon === 'assessment' && '📊'}
+                {contribution.icon === 'psychology' && '🧠'}
+                {contribution.icon === 'sync_alt' && '🔄'}
+              </span>
+            </div>
+            <h3 class="text-xl font-semibold mb-3 group-hover:text-primary-400 transition-colors">
+              {contribution.title}
+            </h3>
+            <p class="text-surface-400">
+              {contribution.description}
+            </p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Degradation Types Preview -->
+  <section class="section bg-surface-900/50">
+    <div class="container-custom">
+      <div class="flex justify-between items-end mb-12 animate-on-scroll">
+        <div>
+          <h2 class="text-3xl sm:text-4xl font-bold mb-4">Degradation Types</h2>
+          <p class="text-surface-400">
+            Explore all 28 degradation types in our benchmark
+          </p>
+        </div>
+        <a href="/benchmark" class="btn btn-secondary hidden sm:flex">
+          View All
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
+        {DEGRADATION_TYPES.slice(0, 14).map((deg, index) => {
+          const category = CATEGORIES.find(c => c.id === deg.category);
+          return (
+            <div
+              class="card-interactive animate-on-scroll"
+              style={`animation-delay: ${index * 30}ms;`}
+            >
+              <div class="text-center">
+                <div class="badge mb-3" style={`background: ${category?.color}20; color: ${category?.color};`}>
+                  {category?.name}
+                </div>
+                <h4 class="font-medium text-sm text-surface-200">
+                  {deg.name}
+                </h4>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div class="mt-8 text-center sm:hidden">
+        <a href="/benchmark" class="btn btn-secondary">
+          View All Types
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="section">
+    <div class="container-custom">
+      <div class="glass-strong rounded-3xl p-8 md:p-12 text-center animate-on-scroll">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-4">
+          Ready to Explore the Benchmark?
+        </h2>
+        <p class="text-surface-400 max-w-xl mx-auto mb-8">
+          Dive into our comprehensive medical image degradation benchmark and start your research today.
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="/benchmark" class="btn btn-primary">
+            Explore Benchmark
+          </a>
+          <a href="/examples" class="btn btn-secondary">
+            View Examples
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

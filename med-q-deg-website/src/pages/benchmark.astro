@@ -1,0 +1,300 @@
+---
+import Layout from '@layouts/Layout.astro';
+import { SITE_CONFIG, CATEGORIES, DEGRADATION_TYPES } from '@data/config';
+
+const title = `Benchmark - ${SITE_CONFIG.title}`;
+const description = 'Explore all 28 degradation types across 6 categories in the MedQ-Deg benchmark.';
+---
+
+<Layout title={title} description={description}>
+  <!-- Hero Section -->
+  <section class="pt-32 pb-16 bg-gradient-to-b from-surface-950 via-surface-900 to-surface-950">
+    <div class="container-custom">
+      <div class="text-center max-w-3xl mx-auto animate-on-scroll">
+        <h1 class="text-4xl sm:text-5xl font-bold mb-6">
+          MedQ-Deg <span class="gradient-text">Benchmark</span>
+        </h1>
+        <p class="text-xl text-surface-400 mb-8">
+          A comprehensive benchmark for medical image degradation recognition with 28 degradation types across 6 categories.
+        </p>
+
+        <!-- Stats -->
+        <div class="flex flex-wrap justify-center gap-8">
+          <div class="text-center">
+            <div class="text-3xl font-bold text-primary-400">{SITE_CONFIG.stats.categories}</div>
+            <div class="text-sm text-surface-500">Categories</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-accent-400">{SITE_CONFIG.stats.types}</div>
+            <div class="text-sm text-surface-500">Degradation Types</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-primary-400">{SITE_CONFIG.stats.datasets}</div>
+            <div class="text-sm text-surface-500">Medical Datasets</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filter Section -->
+  <section class="section">
+    <div class="container-custom">
+      <!-- Category Filter -->
+      <div class="mb-12 animate-on-scroll">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <h2 class="text-2xl font-bold">Filter by Category</h2>
+          <button id="reset-filter" class="btn btn-ghost !px-4 !py-2 text-sm">
+            Reset Filters
+          </button>
+        </div>
+
+        <div class="flex flex-wrap gap-3" id="category-filters">
+          <button
+            class="filter-btn active"
+            data-category="all"
+          >
+            All Types
+            <span class="badge-count">{DEGRADATION_TYPES.length}</span>
+          </button>
+          {CATEGORIES.map((category) => {
+            const count = DEGRADATION_TYPES.filter(deg => deg.category === category.id).length;
+            return (
+              <button
+                class="filter-btn"
+                data-category={category.id}
+                style={`--category-color: ${category.color};`}
+              >
+                <span>{category.name}</span>
+                <span class="badge-count">{count}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <!-- Degradation Types Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="degradation-grid">
+        {DEGRADATION_TYPES.map((deg, index) => {
+          const category = CATEGORIES.find(c => c.id === deg.category);
+          return (
+            <div
+              class="degradation-card card-interactive animate-on-scroll"
+              data-category={deg.category}
+              style={`animation-delay: ${(index % 12) * 50}ms;`}
+            >
+              <!-- Image Placeholder -->
+              <div class="aspect-video rounded-xl bg-gradient-to-br from-surface-800 to-surface-900 mb-4 overflow-hidden relative group">
+                <div class="absolute inset-0 flex items-center justify-center text-surface-600">
+                  <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <!-- Hover Overlay -->
+                <div class="absolute inset-0 bg-gradient-to-t from-surface-950/90 via-surface-950/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                  <p class="text-xs text-surface-400">Click to view examples</p>
+                </div>
+              </div>
+
+              <!-- Content -->
+              <div class="space-y-3">
+                <div>
+                  <div class="badge mb-2" style={`background: ${category?.color}20; color: ${category?.color};`}>
+                    {category?.name}
+                  </div>
+                  <h3 class="font-semibold text-lg">{deg.name}</h3>
+                </div>
+
+                <!-- Severity Levels -->
+                <div class="flex gap-2">
+                  {deg.severity.map((level) => (
+                    <span class="px-2 py-1 rounded text-xs bg-surface-800/50 text-surface-400 capitalize">
+                      {level}
+                    </span>
+                  ))}
+                </div>
+
+                <!-- Action -->
+                <a
+                  href={`/examples?type=${deg.id}`}
+                  class="text-sm text-primary-400 hover:text-primary-300 inline-flex items-center gap-1 group/link"
+                >
+                  View Examples
+                  <svg class="w-4 h-4 transition-transform group-hover/link:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <!-- Empty State -->
+      <div id="empty-state" class="hidden text-center py-16">
+        <div class="w-20 h-20 rounded-full bg-surface-800/50 mx-auto mb-6 flex items-center justify-center">
+          <svg class="w-10 h-10 text-surface-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2 text-surface-400">No degradation types found</h3>
+        <p class="text-surface-500">Try selecting a different category</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Detail Section -->
+  <section class="section bg-surface-900/50">
+    <div class="container-custom">
+      <div class="text-center mb-12 animate-on-scroll">
+        <h2 class="text-3xl font-bold mb-4">Category Details</h2>
+        <p class="text-surface-400 max-w-2xl mx-auto">
+          Each category represents a distinct type of image degradation commonly found in medical imaging.
+        </p>
+      </div>
+
+      <div class="space-y-6">
+        {CATEGORIES.map((category, index) => {
+          const types = DEGRADATION_TYPES.filter(deg => deg.category === category.id);
+          return (
+            <div
+              class="card animate-on-scroll"
+              style={`animation-delay: ${index * 100}ms;`}
+            >
+              <div class="flex flex-col md:flex-row gap-6">
+                <!-- Icon & Title -->
+                <div class="flex-shrink-0">
+                  <div
+                    class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl"
+                    style={`background: ${category.color}20; color: ${category.color};`}
+                  >
+                    {category.icon === 'blur_on' && '◐'}
+                    {category.icon === 'grain' && '▥'}
+                    {category.icon === 'warning' && '⚠'}
+                    {category.icon === 'brightness_6' && '◑'}
+                    {category.icon === 'compress' && '⤢'}
+                    {category.icon === 'more_horiz' && '⋯'}
+                  </div>
+                </div>
+
+                <!-- Content -->
+                <div class="flex-1">
+                  <div class="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 class="text-xl font-bold mb-1">{category.name}</h3>
+                      <p class="text-surface-400 text-sm">{category.description}</p>
+                    </div>
+                    <span
+                      class="badge"
+                      style={`background: ${category.color}20; color: ${category.color};`}
+                    >
+                      {types.length} types
+                    </span>
+                  </div>
+
+                  <!-- Type Pills -->
+                  <div class="flex flex-wrap gap-2">
+                    {types.map((type) => (
+                      <a
+                        href={`/examples?type=${type.id}`}
+                        class="px-3 py-1.5 rounded-lg bg-surface-800/50 hover:bg-surface-700/50 text-sm text-surface-300 hover:text-surface-100 transition-colors"
+                      >
+                        {type.name}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .filter-btn {
+    @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200;
+    @apply bg-surface-800/50 backdrop-blur-md border border-surface-700/50;
+    @apply hover:bg-surface-700/50;
+    @apply inline-flex items-center gap-2;
+  }
+
+  .filter-btn.active {
+    @apply bg-primary-500/20 border-primary-500/50 text-primary-300;
+  }
+
+  .filter-btn[data-category]:not([data-category="all"]).active {
+    background: color-mix(in srgb, var(--category-color) 20%, transparent);
+    border-color: color-mix(in srgb, var(--category-color) 50%, transparent);
+    color: var(--category-color);
+  }
+
+  .badge-count {
+    @apply inline-flex items-center justify-center min-w-[1.5rem] h-6 px-2 rounded-full;
+    @apply bg-surface-800/50 text-xs;
+  }
+
+  .filter-btn.active .badge-count {
+    @apply bg-surface-950/50;
+  }
+
+  .degradation-card {
+    transition: all 0.3s ease;
+  }
+
+  .degradation-card.hidden-by-filter {
+    display: none;
+  }
+</style>
+
+<script>
+  // Filter functionality
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const degradationCards = document.querySelectorAll('.degradation-card');
+  const emptyState = document.getElementById('empty-state');
+  const resetButton = document.getElementById('reset-filter');
+
+  function filterCards(category: string) {
+    let visibleCount = 0;
+
+    degradationCards.forEach((card) => {
+      const cardCategory = card.getAttribute('data-category');
+
+      if (category === 'all' || cardCategory === category) {
+        card.classList.remove('hidden-by-filter');
+        visibleCount++;
+      } else {
+        card.classList.add('hidden-by-filter');
+      }
+    });
+
+    // Show/hide empty state
+    if (visibleCount === 0) {
+      emptyState?.classList.remove('hidden');
+    } else {
+      emptyState?.classList.add('hidden');
+    }
+  }
+
+  filterButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const category = button.getAttribute('data-category') || 'all';
+
+      // Update active state
+      filterButtons.forEach((btn) => btn.classList.remove('active'));
+      button.classList.add('active');
+
+      // Filter cards
+      filterCards(category);
+    });
+  });
+
+  resetButton?.addEventListener('click', () => {
+    const allButton = document.querySelector('.filter-btn[data-category="all"]');
+    if (allButton) {
+      (allButton as HTMLButtonElement).click();
+    }
+  });
+</script>

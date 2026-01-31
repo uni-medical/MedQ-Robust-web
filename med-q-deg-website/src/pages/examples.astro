@@ -1,0 +1,331 @@
+---
+import Layout from '@layouts/Layout.astro';
+import { SITE_CONFIG, CATEGORIES, DEGRADATION_TYPES } from '@data/config';
+import ImageGallery from '@components/visualization/ImageGallery';
+
+const title = `Examples - ${SITE_CONFIG.title}`;
+const description = 'Explore visual examples of medical image degradation types in our benchmark.';
+---
+
+<Layout title={title} description={description}>
+  <!-- Hero Section -->
+  <section class="pt-32 pb-16 bg-gradient-to-b from-surface-950 via-surface-900 to-surface-950">
+    <div class="container-custom">
+      <div class="text-center max-w-3xl mx-auto animate-on-scroll">
+        <h1 class="text-4xl sm:text-5xl font-bold mb-6">
+          Visual <span class="gradient-text">Examples</span>
+        </h1>
+        <p class="text-xl text-surface-400">
+          Explore real-world examples of medical image degradation across different categories and severity levels.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="section">
+    <div class="container-custom">
+      <!-- Category Tabs -->
+      <div class="mb-12 animate-on-scroll">
+        <div class="flex overflow-x-auto scrollbar-hide gap-2 pb-4" id="category-tabs">
+          <button
+            class="category-tab active"
+            data-category="all"
+          >
+            All Examples
+          </button>
+          {CATEGORIES.map((category) => (
+            <button
+              class="category-tab"
+              data-category={category.id}
+              style={`--category-color: ${category.color};`}
+            >
+              <span class="tab-icon">
+                {category.icon === 'blur_on' && '◐'}
+                {category.icon === 'grain' && '▥'}
+                {category.icon === 'warning' && '⚠'}
+                {category.icon === 'brightness_6' && '◑'}
+                {category.icon === 'compress' && '⤢'}
+                {category.icon === 'more_horiz' && '⋯'}
+              </span>
+              {category.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <!-- Examples by Category -->
+      <div class="space-y-16">
+        {CATEGORIES.map((category, catIndex) => {
+          const types = DEGRADATION_TYPES.filter(deg => deg.category === category.id);
+
+          return (
+            <div
+              class="category-section"
+              data-category={category.id}
+              id={`category-${category.id}`}
+            >
+              <!-- Category Header -->
+              <div class="flex items-center gap-4 mb-8 animate-on-scroll">
+                <div
+                  class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0"
+                  style={`background: ${category.color}20; color: ${category.color};`}
+                >
+                  {category.icon === 'blur_on' && '◐'}
+                  {category.icon === 'grain' && '▥'}
+                  {category.icon === 'warning' && '⚠'}
+                  {category.icon === 'brightness_6' && '◑'}
+                  {category.icon === 'compress' && '⤢'}
+                  {category.icon === 'more_horiz' && '⋯'}
+                </div>
+                <div>
+                  <h2 class="text-2xl font-bold">{category.name}</h2>
+                  <p class="text-surface-400 text-sm">{category.description}</p>
+                </div>
+              </div>
+
+              <!-- Types Grid -->
+              <div class="space-y-12">
+                {types.map((type, typeIndex) => (
+                  <div
+                    class="degradation-type-section animate-on-scroll"
+                    style={`animation-delay: ${typeIndex * 100}ms;`}
+                  >
+                    <!-- Type Header -->
+                    <div class="flex items-center justify-between mb-6">
+                      <div>
+                        <div class="flex items-center gap-3 mb-2">
+                          <h3 class="text-xl font-semibold">{type.name}</h3>
+                          <span
+                            class="badge"
+                            style={`background: ${category.color}20; color: ${category.color};`}
+                          >
+                            {category.name}
+                          </span>
+                        </div>
+                        <p class="text-surface-500 text-sm">
+                          Severity levels: {type.severity.join(', ')}
+                        </p>
+                      </div>
+                    </div>
+
+                    <!-- Example Images Grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {/* Placeholder for 4 examples per type */}
+                      {[...Array(4)].map((_, i) => (
+                        <div class="example-card group cursor-pointer">
+                          <div class="aspect-square rounded-xl bg-gradient-to-br from-surface-800 to-surface-900 overflow-hidden relative">
+                            {/* Image placeholder */}
+                            <div class="absolute inset-0 flex items-center justify-center text-surface-600">
+                              <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                            </div>
+
+                            {/* Overlay */}
+                            <div class="absolute inset-0 bg-surface-950/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <div class="text-center">
+                                <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                                </svg>
+                                <p class="text-sm">Click to enlarge</p>
+                              </div>
+                            </div>
+
+                            {/* Severity Badge */}
+                            <div class="absolute top-2 right-2">
+                              <span class="px-2 py-1 rounded text-xs bg-surface-950/80 backdrop-blur-sm capitalize">
+                                {type.severity[i % type.severity.length]}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Caption */}
+                          <p class="text-xs text-surface-500 mt-2 text-center">
+                            Example {i + 1}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <!-- All Examples Section (Hidden by default) -->
+      <div
+        class="category-section hidden"
+        data-category="all"
+        id="category-all"
+      >
+        <div class="text-center mb-12 animate-on-scroll">
+          <h2 class="text-3xl font-bold mb-4">All Examples</h2>
+          <p class="text-surface-400">Browse all degradation types across categories</p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          {DEGRADATION_TYPES.map((type, index) => {
+            const category = CATEGORIES.find(c => c.id === type.category);
+            return (
+              <div
+                class="example-card-compact animate-on-scroll"
+                style={`animation-delay: ${(index % 20) * 30}ms;`}
+              >
+                <div class="aspect-square rounded-xl bg-gradient-to-br from-surface-800 to-surface-900 overflow-hidden relative group cursor-pointer">
+                  <div class="absolute inset-0 flex items-center justify-center text-surface-600">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="mt-3">
+                  <span
+                    class="badge mb-2"
+                    style={`background: ${category?.color}20; color: ${category?.color};`}
+                  >
+                    {category?.name}
+                  </span>
+                  <h4 class="font-medium text-sm">{type.name}</h4>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Gallery Component -->
+  <ImageGallery client:only="react" />
+
+  <!-- CTA Section -->
+  <section class="section bg-surface-900/50">
+    <div class="container-custom">
+      <div class="glass-strong rounded-3xl p-8 md:p-12 text-center animate-on-scroll">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-4">
+          Want to Try on Your Own Data?
+        </h2>
+        <p class="text-surface-400 max-w-xl mx-auto mb-8">
+          Download our pre-trained models and test them on your medical images.
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href={SITE_CONFIG.links.github} class="btn btn-primary">
+            Get Models
+          </a>
+          <a href="/benchmark" class="btn btn-secondary">
+            View Benchmark
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .category-tab {
+    @apply px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200;
+    @apply bg-surface-800/50 backdrop-blur-md border border-surface-700/50;
+    @apply hover:bg-surface-700/50;
+    @apply inline-flex items-center gap-2 whitespace-nowrap flex-shrink-0;
+  }
+
+  .category-tab.active {
+    @apply bg-primary-500/20 border-primary-500/50 text-primary-300;
+  }
+
+  .category-tab[data-category]:not([data-category="all"]).active {
+    background: color-mix(in srgb, var(--category-color) 20%, transparent);
+    border-color: color-mix(in srgb, var(--category-color) 50%, transparent);
+    color: var(--category-color);
+  }
+
+  .tab-icon {
+    @apply text-lg;
+  }
+
+  .category-section {
+    display: block;
+  }
+
+  .category-section.hidden-section {
+    display: none;
+  }
+
+  .example-card {
+    @apply transition-all duration-300;
+  }
+
+  .example-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .example-card-compact {
+    @apply rounded-2xl p-6 transition-all duration-300;
+    @apply bg-surface-800/50 backdrop-blur-md border border-surface-700/50;
+    @apply hover:bg-surface-700/50 hover:border-primary-500/30 hover:shadow-lg hover:shadow-primary-500/10 cursor-pointer;
+  }
+</style>
+
+<script>
+  // Tab switching functionality
+  const categoryTabs = document.querySelectorAll('.category-tab');
+  const categorySections = document.querySelectorAll('.category-section');
+
+  function showCategory(categoryId: string) {
+    categorySections.forEach((section) => {
+      const sectionCategory = section.getAttribute('data-category');
+
+      if (categoryId === 'all') {
+        // Show "All Examples" section, hide category-specific sections
+        if (sectionCategory === 'all') {
+          section.classList.remove('hidden-section');
+          section.classList.remove('hidden');
+        } else {
+          section.classList.add('hidden-section');
+        }
+      } else {
+        // Show specific category section, hide "All Examples"
+        if (sectionCategory === categoryId) {
+          section.classList.remove('hidden-section');
+        } else {
+          section.classList.add('hidden-section');
+        }
+      }
+    });
+  }
+
+  categoryTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const categoryId = tab.getAttribute('data-category') || 'all';
+
+      // Update active state
+      categoryTabs.forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      // Show corresponding section
+      showCategory(categoryId);
+
+      // Smooth scroll to content
+      const targetSection = document.getElementById(`category-${categoryId}`);
+      if (targetSection) {
+        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // Handle URL parameters (e.g., ?type=gaussian_blur)
+  const urlParams = new URLSearchParams(window.location.search);
+  const typeParam = urlParams.get('type');
+
+  if (typeParam) {
+    // Find the degradation type and its category
+    // This would need the DEGRADATION_TYPES data to be available in the client
+    // For now, we'll just scroll to the top
+    console.log('Type parameter:', typeParam);
+    // TODO: Implement auto-filtering based on type parameter
+  }
+</script>
