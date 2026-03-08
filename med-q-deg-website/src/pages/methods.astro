@@ -1,581 +1,316 @@
 ---
 import Layout from '@layouts/Layout.astro';
-import { SITE_CONFIG } from '@data/config';
+import { SITE_CONFIG, CATEGORIES, DEGRADATION_TYPES } from '@data/config';
 
 const title = `Methods - ${SITE_CONFIG.title}`;
-const description = 'Technical details of the MedQ-Deg benchmark: data collection, quality filtering, degradation application, evaluation protocol, and models evaluated.';
+const description = 'Technical details of the MedQ-Deg benchmark construction and evaluation methodology.';
 const base = import.meta.env.BASE_URL;
 ---
 
 <Layout title={title} description={description}>
-  <!-- Hero Section -->
+  <!-- Hero -->
   <section class="pt-32 pb-16 bg-gradient-to-b from-surface-50 via-white to-surface-50">
     <div class="container-custom">
       <div class="text-center max-w-3xl mx-auto animate-on-scroll">
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8">
-          <span class="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
-          <span class="text-sm text-surface-600">Benchmark Overview</span>
-        </div>
         <h1 class="text-4xl sm:text-5xl font-bold mb-6">
           Benchmark <span class="gradient-text">Construction</span>
         </h1>
         <p class="text-xl text-surface-500">
-          MedQ-Deg is a comprehensive VQA benchmark for evaluating MLLMs under medical image degradations. Our construction pipeline ensures high-quality, clinically relevant evaluation data.
+          MedQ-Deg is built upon a dual-tier hierarchy that stratifies both model capabilities and clinical degradation patterns, supported by a human-curated data pipeline.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- Pipeline Overview -->
+  <!-- Framework Figure -->
+  <section class="section">
+    <div class="container-custom">
+      <div class="animate-on-scroll">
+        <div class="rounded-2xl overflow-hidden border border-surface-200 bg-white shadow-lg">
+          <img src={`${base}/paper-figs/framework.png`} alt="MedQ-Deg Framework" class="w-full" loading="lazy" />
+        </div>
+        <p class="text-center text-sm text-surface-400 mt-4">
+          <strong>Fig. 2:</strong> Overview of the MedQ-Deg benchmark framework.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3-column pipeline -->
+  <section class="section bg-surface-100/50">
+    <div class="container-custom">
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Capability Hierarchy -->
+        <div class="card animate-on-scroll">
+          <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-4 text-xl font-bold">1</div>
+          <h3 class="text-xl font-bold mb-3">Capability Hierarchy</h3>
+          <p class="text-surface-500 text-sm mb-4">
+            A three-tier framework decomposing clinical competence:
+          </p>
+          <ul class="space-y-2 text-sm">
+            <li class="flex items-start gap-2">
+              <span class="text-blue-500 font-bold mt-0.5">T1</span>
+              <span><strong>High-level:</strong> Medical Perception & Clinical Reasoning</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-blue-500 font-bold mt-0.5">T2</span>
+              <span><strong>Mid-level:</strong> 6 clinical tasks (CU, IP, AR, BS, Diag, Treat)</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-blue-500 font-bold mt-0.5">T3</span>
+              <span><strong>Fine-grained:</strong> 30 specific clinical skills</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Degradation Hierarchy -->
+        <div class="card animate-on-scroll" style="animation-delay: 100ms;">
+          <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center mb-4 text-xl font-bold">2</div>
+          <h3 class="text-xl font-bold mb-3">Degradation Hierarchy</h3>
+          <p class="text-surface-500 text-sm mb-4">
+            Two-level organization grounded in clinical imaging physics:
+          </p>
+          <ul class="space-y-2 text-sm">
+            {CATEGORIES.map(cat => (
+              <li class="flex items-start gap-2">
+                <span class="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={`background: ${cat.color};`}></span>
+                <span><strong>{cat.name}:</strong> {DEGRADATION_TYPES.filter(d => d.category === cat.id).length} types</span>
+              </li>
+            ))}
+          </ul>
+          <div class="mt-3 text-xs text-surface-400">
+            Each degradation calibrated at 3 severity levels (L0/L1/L2) by expert radiologists.
+          </div>
+        </div>
+
+        <!-- Data Pipeline -->
+        <div class="card animate-on-scroll" style="animation-delay: 200ms;">
+          <div class="w-12 h-12 rounded-xl bg-green-100 text-green-600 flex items-center justify-center mb-4 text-xl font-bold">3</div>
+          <h3 class="text-xl font-bold mb-3">Data Pipeline</h3>
+          <p class="text-surface-500 text-sm mb-4">
+            Human-in-the-loop quality assurance:
+          </p>
+          <ul class="space-y-2 text-sm">
+            <li class="flex items-start gap-2">
+              <span class="text-green-500 mt-0.5">1.</span>
+              <span><strong>4,306</strong> clean medical images from 3 top-tier benchmarks</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-500 mt-0.5">2.</span>
+              <span>Modality-specific degradation application at L1 & L2</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-500 mt-0.5">3.</span>
+              <span><strong>3 board-certified radiologists</strong> independently reviewed each pair</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-500 mt-0.5">4.</span>
+              <span>8.3% removed by human filter -> <strong>24,894 QA pairs</strong></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Degradation Types Detail -->
   <section class="section">
     <div class="container-custom">
       <div class="text-center mb-12 animate-on-scroll">
-        <h2 class="text-3xl font-bold mb-4">Construction Pipeline</h2>
+        <h2 class="text-3xl font-bold mb-4">Degradation Type Statistics</h2>
         <p class="text-surface-500 max-w-2xl mx-auto">
-          Our benchmark construction follows a rigorous four-stage pipeline to ensure data quality and clinical relevance.
+          19 degradation types across 5 categories, spanning 7 medical imaging modalities.
         </p>
       </div>
 
-      <!-- Pipeline Steps -->
-      <div class="grid md:grid-cols-4 gap-6 animate-on-scroll">
-        <div class="card text-center group">
-          <div class="w-14 h-14 rounded-2xl bg-primary-500/15 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-            <span class="text-2xl">📥</span>
-          </div>
-          <h3 class="font-semibold mb-2">Data Collection</h3>
-          <p class="text-sm text-surface-500">Three high-quality medical VQA datasets</p>
-        </div>
-        <div class="card text-center group">
-          <div class="w-14 h-14 rounded-2xl bg-accent-500/15 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-            <span class="text-2xl">🔍</span>
-          </div>
-          <h3 class="font-semibold mb-2">Quality Filtering</h3>
-          <p class="text-sm text-surface-500">Expert validation with 91.7% retention</p>
-        </div>
-        <div class="card text-center group">
-          <div class="w-14 h-14 rounded-2xl bg-primary-500/15 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-            <span class="text-2xl">⚡</span>
-          </div>
-          <h3 class="font-semibold mb-2">Degradation</h3>
-          <p class="text-sm text-surface-500">18 types across three severity levels</p>
-        </div>
-        <div class="card text-center group">
-          <div class="w-14 h-14 rounded-2xl bg-accent-500/15 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-            <span class="text-2xl">📊</span>
-          </div>
-          <h3 class="font-semibold mb-2">Evaluation</h3>
-          <p class="text-sm text-surface-500">40 MLLMs with calibration metrics</p>
-        </div>
+      <div class="overflow-x-auto animate-on-scroll">
+        <table class="w-full bg-white rounded-2xl overflow-hidden border border-surface-200 shadow-sm text-sm">
+          <thead>
+            <tr class="bg-surface-50 border-b border-surface-200">
+              <th class="text-left p-3 font-semibold">Name</th>
+              <th class="text-left p-3 font-semibold">Parent Category</th>
+              <th class="text-center p-3 font-semibold">Count</th>
+              <th class="text-center p-3 font-semibold">Ratio in Total</th>
+              <th class="text-left p-3 font-semibold">Modality</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Artifacts -->
+            <tr class="bg-pink-50/50 border-b border-surface-200">
+              <td class="p-3 font-bold" style="color: #ec4899;">Artifacts</td>
+              <td class="p-3">-</td>
+              <td class="p-3 text-center font-bold">5,322</td>
+              <td class="p-3 text-center font-bold">25.85%</td>
+              <td class="p-3 font-bold">All</td>
+            </tr>
+            <tr class="border-b border-surface-100"><td class="p-3 pl-6">limited_angle</td><td class="p-3 text-surface-500">Artifacts</td><td class="p-3 text-center">1,440</td><td class="p-3 text-center">6.99%</td><td class="p-3">CT</td></tr>
+            <tr class="border-b border-surface-100"><td class="p-3 pl-6">sparse_view</td><td class="p-3 text-surface-500">Artifacts</td><td class="p-3 text-center">1,440</td><td class="p-3 text-center">6.99%</td><td class="p-3">CT</td></tr>
+            <tr class="border-b border-surface-100"><td class="p-3 pl-6">bias_field_artifact</td><td class="p-3 text-surface-500">Artifacts</td><td class="p-3 text-center">936</td><td class="p-3 text-center">4.55%</td><td class="p-3">MRI</td></tr>
+            <tr class="border-b border-surface-100"><td class="p-3 pl-6">undersampling_artifact</td><td class="p-3 text-surface-500">Artifacts</td><td class="p-3 text-center">672</td><td class="p-3 text-center">3.26%</td><td class="p-3">MRI</td></tr>
+            <tr class="border-b border-surface-100"><td class="p-3 pl-6">ghosting_artifact</td><td class="p-3 text-surface-500">Artifacts</td><td class="p-3 text-center">352</td><td class="p-3 text-center">1.71%</td><td class="p-3">MRI</td></tr>
+            <tr class="border-b border-surface-100"><td class="p-3 pl-6">blood_cell_artifact</td><td class="p-3 text-surface-500">Artifacts</td><td class="p-3 text-center">304</td><td class="p-3 text-center">1.48%</td><td class="p-3">Pathology</td></tr>
+            <tr class="border-b border-surface-200"><td class="p-3 pl-6">dark_spots_artifact</td><td class="p-3 text-surface-500">Artifacts</td><td class="p-3 text-center">178</td><td class="p-3 text-center">0.86%</td><td class="p-3">Pathology</td></tr>
+            <!-- Motion -->
+            <tr class="bg-emerald-50/50 border-b border-surface-200">
+              <td class="p-3 font-bold" style="color: #10b981;">Motion Interference</td>
+              <td class="p-3">-</td>
+              <td class="p-3 text-center font-bold">2,992</td>
+              <td class="p-3 text-center font-bold">14.53%</td>
+              <td class="p-3 font-bold">All</td>
+            </tr>
+            <tr class="border-b border-surface-100"><td class="p-3 pl-6">object_rotation</td><td class="p-3 text-surface-500">Motion</td><td class="p-3 text-center">2,718</td><td class="p-3 text-center">13.20%</td><td class="p-3">All</td></tr>
+            <tr class="border-b border-surface-200"><td class="p-3 pl-6">object_movement</td><td class="p-3 text-surface-500">Motion</td><td class="p-3 text-center">274</td><td class="p-3 text-center">1.33%</td><td class="p-3">All</td></tr>
+            <!-- Intensity -->
+            <tr class="bg-amber-50/50 border-b border-surface-200">
+              <td class="p-3 font-bold" style="color: #f59e0b;">Intensity Jitter</td>
+              <td class="p-3">-</td>
+              <td class="p-3 text-center font-bold">1,846</td>
+              <td class="p-3 text-center font-bold">8.97%</td>
+              <td class="p-3 font-bold">All</td>
+            </tr>
+            <tr class="border-b border-surface-100"><td class="p-3 pl-6">adjust_brightness</td><td class="p-3 text-surface-500">Intensity</td><td class="p-3 text-center">916</td><td class="p-3 text-center">4.45%</td><td class="p-3">All</td></tr>
+            <tr class="border-b border-surface-100"><td class="p-3 pl-6">exposure</td><td class="p-3 text-surface-500">Intensity</td><td class="p-3 text-center">518</td><td class="p-3 text-center">2.52%</td><td class="p-3">All</td></tr>
+            <tr class="border-b border-surface-200"><td class="p-3 pl-6">reduce_contrast</td><td class="p-3 text-surface-500">Intensity</td><td class="p-3 text-center">412</td><td class="p-3 text-center">2.00%</td><td class="p-3">All</td></tr>
+            <!-- Noise -->
+            <tr class="bg-violet-50/50 border-b border-surface-200">
+              <td class="p-3 font-bold" style="color: #8b5cf6;">Noise</td>
+              <td class="p-3">-</td>
+              <td class="p-3 text-center font-bold">3,796</td>
+              <td class="p-3 text-center font-bold">18.44%</td>
+              <td class="p-3 font-bold">All</td>
+            </tr>
+            <tr class="border-b border-surface-100"><td class="p-3 pl-6">gaussian_noise</td><td class="p-3 text-surface-500">Noise</td><td class="p-3 text-center">2,680</td><td class="p-3 text-center">13.02%</td><td class="p-3">All</td></tr>
+            <tr class="border-b border-surface-200"><td class="p-3 pl-6">low_dose</td><td class="p-3 text-surface-500">Noise</td><td class="p-3 text-center">1,116</td><td class="p-3 text-center">5.42%</td><td class="p-3">CT</td></tr>
+            <!-- Resolution & Blur -->
+            <tr class="bg-indigo-50/50 border-b border-surface-200">
+              <td class="p-3 font-bold" style="color: #6366f1;">Resolution & Blur</td>
+              <td class="p-3">-</td>
+              <td class="p-3 text-center font-bold">6,632</td>
+              <td class="p-3 text-center font-bold">32.21%</td>
+              <td class="p-3 font-bold">All</td>
+            </tr>
+            <tr class="border-b border-surface-100"><td class="p-3 pl-6">low_resolution</td><td class="p-3 text-surface-500">Resolution & Blur</td><td class="p-3 text-center">3,046</td><td class="p-3 text-center">14.80%</td><td class="p-3">All</td></tr>
+            <tr class="border-b border-surface-100"><td class="p-3 pl-6">motion_blur</td><td class="p-3 text-surface-500">Resolution & Blur</td><td class="p-3 text-center">2,820</td><td class="p-3 text-center">13.70%</td><td class="p-3">All</td></tr>
+            <tr class="border-b border-surface-100"><td class="p-3 pl-6">gaussian_blur</td><td class="p-3 text-surface-500">Resolution & Blur</td><td class="p-3 text-center">470</td><td class="p-3 text-center">2.28%</td><td class="p-3">All</td></tr>
+            <tr><td class="p-3 pl-6">bubble</td><td class="p-3 text-surface-500">Resolution & Blur</td><td class="p-3 text-center">296</td><td class="p-3 text-center">1.44%</td><td class="p-3">Pathology</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </section>
 
-  <!-- Step 1: Data Collection -->
-  <section class="section bg-surface-100/50" id="collection">
+  <!-- Degradation Examples from Paper -->
+  <section class="section bg-surface-100/50">
     <div class="container-custom">
-      <div class="grid lg:grid-cols-2 gap-12 items-center">
-        <div class="animate-on-scroll">
-          <div class="inline-flex items-center gap-2 mb-4">
-            <div class="w-10 h-10 rounded-xl bg-primary-500/15 flex items-center justify-center text-xl">
-              📥
-            </div>
-            <span class="text-sm font-semibold text-primary-600 uppercase tracking-wider">Stage 1</span>
-          </div>
-          <h2 class="text-3xl font-bold mb-4">Data Collection</h2>
-          <p class="text-surface-500 mb-6 leading-relaxed">
-            We aggregate medical VQA data from three established datasets, covering diverse imaging modalities and clinical scenarios to ensure comprehensive evaluation coverage.
-          </p>
-
-          <div class="space-y-4">
-            <div class="card">
-              <div class="flex items-start gap-4">
-                <div class="w-10 h-10 rounded-lg bg-primary-50 flex items-center justify-center flex-shrink-0">
-                  <span class="text-lg">🏥</span>
-                </div>
-                <div>
-                  <h4 class="font-semibold text-surface-800">OmniMedVQA</h4>
-                  <p class="text-sm text-surface-500">Large-scale medical VQA dataset with diverse modalities</p>
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="flex items-start gap-4">
-                <div class="w-10 h-10 rounded-lg bg-accent-50 flex items-center justify-center flex-shrink-0">
-                  <span class="text-lg">🔬</span>
-                </div>
-                <div>
-                  <h4 class="font-semibold text-surface-800">GMAI-MMBench</h4>
-                  <p class="text-sm text-surface-500">Comprehensive medical multimodal benchmark</p>
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="flex items-start gap-4">
-                <div class="w-10 h-10 rounded-lg bg-primary-50 flex items-center justify-center flex-shrink-0">
-                  <span class="text-lg">🧠</span>
-                </div>
-                <div>
-                  <h4 class="font-semibold text-surface-800">MedXpertQA</h4>
-                  <p class="text-sm text-surface-500">Expert-curated medical question answering</p>
-                </div>
-              </div>
+      <div class="text-center mb-12 animate-on-scroll">
+        <h2 class="text-3xl font-bold mb-4">Degradation Examples</h2>
+        <p class="text-surface-500 max-w-2xl mx-auto">
+          Visual examples showing how each degradation type affects medical images at different severity levels.
+        </p>
+      </div>
+      <div class="space-y-8">
+        {[1, 2, 3].map((i) => (
+          <div class="animate-on-scroll" style={`animation-delay: ${(i-1) * 100}ms;`}>
+            <div class="rounded-2xl overflow-hidden border border-surface-200 bg-white shadow-sm">
+              <img src={`${base}/paper-figs/degradation_examples_${i}.png`} alt={`Degradation Examples Page ${i}`} class="w-full" loading="lazy" />
             </div>
           </div>
-        </div>
-
-        <div class="animate-on-scroll" style="animation-delay: 150ms;">
-          <div class="card">
-            <div class="aspect-[4/3] rounded-xl bg-gradient-to-br from-primary-50 to-accent-50 border border-primary-100 flex flex-col items-center justify-center p-8">
-              <div class="text-center mb-6">
-                <div class="text-5xl font-bold text-primary-600 mb-2">24,894</div>
-                <div class="text-surface-500">Total QA Pairs</div>
-              </div>
-              <div class="grid grid-cols-3 gap-4 w-full max-w-sm">
-                <div class="text-center p-3 bg-white rounded-lg border border-surface-200">
-                  <div class="text-xl font-bold text-accent-600">7</div>
-                  <div class="text-xs text-surface-500">Modalities</div>
-                </div>
-                <div class="text-center p-3 bg-white rounded-lg border border-surface-200">
-                  <div class="text-xl font-bold text-primary-600">18</div>
-                  <div class="text-xs text-surface-500">Degradations</div>
-                </div>
-                <div class="text-center p-3 bg-white rounded-lg border border-surface-200">
-                  <div class="text-xl font-bold text-accent-600">30</div>
-                  <div class="text-xs text-surface-500">Skills</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   </section>
 
-  <!-- Step 2: Quality Filtering -->
-  <section class="section" id="filtering">
+  <!-- Evaluation Metrics -->
+  <section class="section">
     <div class="container-custom">
-      <div class="grid lg:grid-cols-2 gap-12 items-center">
-        <div class="animate-on-scroll order-2 lg:order-1">
-          <div class="card">
-            <div class="aspect-[4/3] rounded-xl bg-gradient-to-br from-accent-50 to-primary-50 border border-accent-100 flex flex-col items-center justify-center p-8">
-              <div class="text-center mb-6">
-                <div class="text-5xl font-bold text-accent-600 mb-2">91.7%</div>
-                <div class="text-surface-500">Net Retention Rate</div>
-              </div>
-              <div class="flex items-center gap-4 mb-6">
-                <div class="flex -space-x-2">
-                  <div class="w-10 h-10 rounded-full bg-primary-100 border-2 border-white flex items-center justify-center text-sm">👨‍⚕️</div>
-                  <div class="w-10 h-10 rounded-full bg-accent-100 border-2 border-white flex items-center justify-center text-sm">👩‍⚕️</div>
-                  <div class="w-10 h-10 rounded-full bg-primary-100 border-2 border-white flex items-center justify-center text-sm">👨‍⚕️</div>
-                </div>
-                <span class="text-sm text-surface-600">3 Radiologists</span>
-              </div>
-              <div class="w-full max-w-sm space-y-2">
-                <div class="flex justify-between text-sm">
-                  <span class="text-surface-600">Initial Samples</span>
-                  <span class="font-medium">100%</span>
-                </div>
-                <div class="h-2 bg-surface-200 rounded-full overflow-hidden">
-                  <div class="h-full bg-surface-400 rounded-full" style="width: 100%"></div>
-                </div>
-                <div class="flex justify-between text-sm">
-                  <span class="text-surface-600">Retained</span>
-                  <span class="font-medium text-accent-600">91.7%</span>
-                </div>
-                <div class="h-2 bg-surface-200 rounded-full overflow-hidden">
-                  <div class="h-full bg-accent-500 rounded-full" style="width: 91.7%"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="animate-on-scroll order-1 lg:order-2" style="animation-delay: 150ms;">
-          <div class="inline-flex items-center gap-2 mb-4">
-            <div class="w-10 h-10 rounded-xl bg-accent-500/15 flex items-center justify-center text-xl">
-              🔍
-            </div>
-            <span class="text-sm font-semibold text-accent-600 uppercase tracking-wider">Stage 2</span>
-          </div>
-          <h2 class="text-3xl font-bold mb-4">Quality Filtering</h2>
-          <p class="text-surface-500 mb-6 leading-relaxed">
-            All samples undergo rigorous quality validation by three board-certified radiologists to ensure clinical relevance and data integrity.
-          </p>
-
-          <div class="space-y-4 mb-6">
-            <div class="flex items-start gap-3">
-              <div class="w-6 h-6 rounded-full bg-accent-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg class="w-3.5 h-3.5 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <div>
-                <h4 class="font-semibold text-surface-800 mb-1">Expert Validation</h4>
-                <p class="text-sm text-surface-500">Three radiologists independently review each sample for quality and relevance.</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="w-6 h-6 rounded-full bg-accent-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg class="w-3.5 h-3.5 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <div>
-                <h4 class="font-semibold text-surface-800 mb-1">Low-Quality Removal</h4>
-                <p class="text-sm text-surface-500">Samples with ambiguous questions, unclear images, or incorrect answers are filtered out.</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="w-6 h-6 rounded-full bg-accent-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg class="w-3.5 h-3.5 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <div>
-                <h4 class="font-semibold text-surface-800 mb-1">High Retention Rate</h4>
-                <p class="text-sm text-surface-500">91.7% net retention demonstrates the high quality of source datasets.</p>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="text-center mb-12 animate-on-scroll">
+        <h2 class="text-3xl font-bold mb-4">Evaluation Metrics</h2>
+        <p class="text-surface-500 max-w-2xl mx-auto">
+          We utilize a combination of accuracy and uncertainty metrics for quantifying both actual performance and calibration shift.
+        </p>
       </div>
-    </div>
-  </section>
 
-  <!-- Step 3: Degradation Application -->
-  <section class="section bg-surface-100/50" id="degradation">
-    <div class="container-custom">
-      <div class="grid lg:grid-cols-2 gap-12 items-center">
-        <div class="animate-on-scroll">
-          <div class="inline-flex items-center gap-2 mb-4">
-            <div class="w-10 h-10 rounded-xl bg-primary-500/15 flex items-center justify-center text-xl">
-              ⚡
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="card animate-on-scroll">
+          <h3 class="text-lg font-bold mb-3">Actual Performance</h3>
+          <div class="bg-surface-50 rounded-xl p-4 text-center mb-3">
+            <div class="font-mono text-lg text-primary-700">
+              Acc(f, D) = (1/|D|) &Sigma; 1[y&#770;(x) = y*(x)]
             </div>
-            <span class="text-sm font-semibold text-primary-600 uppercase tracking-wider">Stage 3</span>
           </div>
-          <h2 class="text-3xl font-bold mb-4">Degradation Application</h2>
-          <p class="text-surface-500 mb-6 leading-relaxed">
-            We systematically apply 18 degradation types across three severity levels (L0, L1, L2) using established medical imaging libraries.
+          <p class="text-sm text-surface-500">
+            Standard accuracy metric via multiple-choice selection.
           </p>
-
-          <div class="space-y-4 mb-6">
-            <div class="flex items-start gap-3">
-              <div class="w-6 h-6 rounded-full bg-primary-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg class="w-3.5 h-3.5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <div>
-                <h4 class="font-semibold text-surface-800 mb-1">18 Degradation Types</h4>
-                <p class="text-sm text-surface-500">Comprehensive coverage including blur, noise, artifacts, contrast changes, and compression.</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="w-6 h-6 rounded-full bg-primary-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg class="w-3.5 h-3.5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <div>
-                <h4 class="font-semibold text-surface-800 mb-1">Three Severity Levels</h4>
-                <p class="text-sm text-surface-500">L0 (original), L1 (moderate), L2 (severe) for fine-grained robustness analysis.</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="w-6 h-6 rounded-full bg-primary-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg class="w-3.5 h-3.5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <div>
-                <h4 class="font-semibold text-surface-800 mb-1">Standardized Tools</h4>
-                <p class="text-sm text-surface-500">Implemented using TorchIO, Torch Radon, and SciPy for reproducibility.</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Severity Levels -->
-          <div class="glass-strong rounded-2xl p-5">
-            <h4 class="font-semibold text-surface-700 mb-3 text-sm uppercase tracking-wide">Severity Levels</h4>
-            <div class="flex flex-wrap gap-3">
-              <span class="px-3 py-1.5 rounded-lg bg-surface-100 text-surface-700 text-sm font-medium border border-surface-200">
-                L0: Original
-              </span>
-              <span class="px-3 py-1.5 rounded-lg bg-primary-500/10 text-primary-700 text-sm font-medium border border-primary-200">
-                L1: Moderate
-              </span>
-              <span class="px-3 py-1.5 rounded-lg bg-accent-500/10 text-accent-700 text-sm font-medium border border-accent-200">
-                L2: Severe
-              </span>
-            </div>
-          </div>
         </div>
-
-        <div class="animate-on-scroll" style="animation-delay: 150ms;">
-          <div class="card">
-            <div class="aspect-[4/3] rounded-xl bg-gradient-to-br from-primary-50 to-accent-50 border border-primary-100 flex flex-col items-center justify-center p-8">
-              <div class="grid grid-cols-3 gap-3 w-full max-w-sm mb-6">
-                <div class="text-center p-3 bg-white rounded-lg border border-surface-200">
-                  <div class="text-2xl font-bold text-primary-600">18</div>
-                  <div class="text-xs text-surface-500">Types</div>
-                </div>
-                <div class="text-center p-3 bg-white rounded-lg border border-surface-200">
-                  <div class="text-2xl font-bold text-accent-600">3</div>
-                  <div class="text-xs text-surface-500">Levels</div>
-                </div>
-                <div class="text-center p-3 bg-white rounded-lg border border-surface-200">
-                  <div class="text-2xl font-bold text-primary-600">54</div>
-                  <div class="text-xs text-surface-500">Variants</div>
-                </div>
-              </div>
-              <div class="w-full max-w-sm space-y-2">
-                <div class="flex items-center gap-2 text-sm">
-                  <span class="w-2 h-2 rounded-full bg-primary-500"></span>
-                  <span class="text-surface-600">Blur (Gaussian, Motion, Defocus)</span>
-                </div>
-                <div class="flex items-center gap-2 text-sm">
-                  <span class="w-2 h-2 rounded-full bg-accent-500"></span>
-                  <span class="text-surface-600">Noise (Gaussian, Salt-Pepper, Speckle)</span>
-                </div>
-                <div class="flex items-center gap-2 text-sm">
-                  <span class="w-2 h-2 rounded-full bg-primary-500"></span>
-                  <span class="text-surface-600">Artifacts (Motion, Ring, Stripe)</span>
-                </div>
-                <div class="flex items-center gap-2 text-sm">
-                  <span class="w-2 h-2 rounded-full bg-accent-500"></span>
-                  <span class="text-surface-600">Contrast & Compression</span>
-                </div>
-              </div>
+        <div class="card animate-on-scroll" style="animation-delay: 100ms;">
+          <h3 class="text-lg font-bold mb-3">Perceived Confidence</h3>
+          <div class="bg-surface-50 rounded-xl p-4 text-center mb-3">
+            <div class="font-mono text-lg text-primary-700">
+              C(x) = 1 - H(x) / log K
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Step 4: Evaluation Protocol -->
-  <section class="section" id="evaluation">
-    <div class="container-custom">
-      <div class="grid lg:grid-cols-2 gap-12 items-center">
-        <div class="animate-on-scroll order-2 lg:order-1">
-          <div class="card">
-            <div class="aspect-[4/3] rounded-xl bg-gradient-to-br from-accent-50 to-primary-50 border border-accent-100 flex flex-col items-center justify-center p-8">
-              <div class="text-center mb-6">
-                <div class="text-lg font-mono bg-white px-4 py-2 rounded-lg border border-surface-200 mb-4">
-                  Δ<sub>calib</sub>(f, D) = (1/|D|) Σ C(x) - Acc(f, D)
-                </div>
-                <div class="text-surface-500 text-sm">Calibration Shift Formula</div>
-              </div>
-              <div class="w-full max-w-sm space-y-3">
-                <div class="flex items-center gap-3 p-3 bg-white rounded-lg border border-surface-200">
-                  <span class="text-2xl">🎯</span>
-                  <div>
-                    <div class="font-medium text-surface-800">Performance Eval</div>
-                    <div class="text-xs text-surface-500">T=3, temperature=1.0</div>
-                  </div>
-                </div>
-                <div class="flex items-center gap-3 p-3 bg-white rounded-lg border border-surface-200">
-                  <span class="text-2xl">📏</span>
-                  <div>
-                    <div class="font-medium text-surface-800">Calibration Eval</div>
-                    <div class="text-xs text-surface-500">T=10 for uncertainty</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="animate-on-scroll order-1 lg:order-2" style="animation-delay: 150ms;">
-          <div class="inline-flex items-center gap-2 mb-4">
-            <div class="w-10 h-10 rounded-xl bg-accent-500/15 flex items-center justify-center text-xl">
-              📊
-            </div>
-            <span class="text-sm font-semibold text-accent-600 uppercase tracking-wider">Stage 4</span>
-          </div>
-          <h2 class="text-3xl font-bold mb-4">Evaluation Protocol</h2>
-          <p class="text-surface-500 mb-6 leading-relaxed">
-            Our evaluation protocol measures both performance and calibration, with a focus on Calibration Shift as the core metric for assessing model reliability under degradation.
+          <p class="text-sm text-surface-500">
+            Measured via voting-based prediction consistency over T=10 independent trials.
           </p>
-
-          <div class="space-y-4 mb-6">
-            <div class="flex items-start gap-3">
-              <div class="w-6 h-6 rounded-full bg-accent-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg class="w-3.5 h-3.5 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <div>
-                <h4 class="font-semibold text-surface-800 mb-1">Performance Evaluation</h4>
-                <p class="text-sm text-surface-500">T=3 inference runs with temperature=1.0 for consistent results.</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="w-6 h-6 rounded-full bg-accent-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg class="w-3.5 h-3.5 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <div>
-                <h4 class="font-semibold text-surface-800 mb-1">Calibration Evaluation</h4>
-                <p class="text-sm text-surface-500">T=10 inference runs to measure uncertainty and confidence calibration.</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="w-6 h-6 rounded-full bg-accent-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg class="w-3.5 h-3.5 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <div>
-                <h4 class="font-semibold text-surface-800 mb-1">Calibration Shift</h4>
-                <p class="text-sm text-surface-500">Core metric: positive values indicate overconfidence under degradation.</p>
-              </div>
+        </div>
+        <div class="card animate-on-scroll" style="animation-delay: 200ms;">
+          <h3 class="text-lg font-bold mb-3">Calibration Shift</h3>
+          <div class="bg-surface-50 rounded-xl p-4 text-center mb-3">
+            <div class="font-mono text-lg text-red-600">
+              &Delta;<sub>calib</sub> = (1/|D|) &Sigma; C(x) - Acc(f, D)
             </div>
           </div>
+          <p class="text-sm text-surface-500">
+            Positive values indicate overconfidence (AI Dunning-Kruger Effect).
+          </p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Models Evaluated -->
-  <section class="section bg-surface-100/50" id="models">
+  <section class="section bg-surface-100/50">
     <div class="container-custom">
       <div class="text-center mb-12 animate-on-scroll">
-        <h2 class="text-3xl font-bold mb-4">Models Evaluated</h2>
+        <h2 class="text-3xl font-bold mb-4">40 Models Evaluated</h2>
         <p class="text-surface-500 max-w-2xl mx-auto">
-          We evaluate 40 state-of-the-art MLLMs across three categories: commercial APIs, open-source general models, and medical-specific models.
+          Three groups spanning commercial, open-source general, and medical-specialized models.
         </p>
       </div>
 
-      <div class="grid md:grid-cols-3 gap-8 animate-on-scroll">
-        <!-- Commercial Models -->
-        <div class="card">
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="card animate-on-scroll">
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-xl bg-primary-500/15 flex items-center justify-center">
-              <span class="text-xl">🏢</span>
-            </div>
-            <div>
-              <h3 class="font-semibold">Commercial</h3>
-              <p class="text-xs text-surface-500">9 Models</p>
-            </div>
+            <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center font-bold">9</div>
+            <h3 class="text-lg font-bold">Commercial MLLMs</h3>
           </div>
-          <div class="space-y-2">
-            <div class="flex items-center gap-2 text-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
-              <span class="text-surface-700">GPT-5</span>
-            </div>
-            <div class="flex items-center gap-2 text-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
-              <span class="text-surface-700">GPT-4o</span>
-            </div>
-            <div class="flex items-center gap-2 text-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
-              <span class="text-surface-700">Gemini-2.5-Pro</span>
-            </div>
-            <div class="flex items-center gap-2 text-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
-              <span class="text-surface-700">Claude-Sonnet-4.5</span>
-            </div>
-            <div class="flex items-center gap-2 text-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
-              <span class="text-surface-700">+ 5 more</span>
-            </div>
+          <div class="flex flex-wrap gap-2">
+            {['GPT-5', 'GPT-5.1', 'GPT-4o', 'GPT-4.1', 'GPT-4.1-mini', 'GPT-4o-mini', 'Gemini-2.5-Pro', 'Gemini-2.5-Flash', 'Claude-Sonnet-4.5'].map(m => (
+              <span class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 text-xs border border-amber-200">{m}</span>
+            ))}
           </div>
         </div>
-
-        <!-- Open Source General -->
-        <div class="card">
+        <div class="card animate-on-scroll" style="animation-delay: 100ms;">
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-xl bg-accent-500/15 flex items-center justify-center">
-              <span class="text-xl">🌐</span>
-            </div>
-            <div>
-              <h3 class="font-semibold">Open General</h3>
-              <p class="text-xs text-surface-500">21 Models</p>
-            </div>
+            <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">21</div>
+            <h3 class="text-lg font-bold">Open-Source General</h3>
           </div>
-          <div class="space-y-2">
-            <div class="flex items-center gap-2 text-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent-500"></span>
-              <span class="text-surface-700">InternVL3</span>
-            </div>
-            <div class="flex items-center gap-2 text-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent-500"></span>
-              <span class="text-surface-700">Qwen3-VL</span>
-            </div>
-            <div class="flex items-center gap-2 text-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent-500"></span>
-              <span class="text-surface-700">LLaVA-OneVision</span>
-            </div>
-            <div class="flex items-center gap-2 text-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent-500"></span>
-              <span class="text-surface-700">DeepSeek-VL2</span>
-            </div>
-            <div class="flex items-center gap-2 text-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent-500"></span>
-              <span class="text-surface-700">+ 17 more</span>
-            </div>
+          <div class="flex flex-wrap gap-2">
+            {['InternVL3-78B', 'Qwen3-VL-235B', 'GLM-4.5v', 'Qwen2.5-VL-72B', 'Gemma-3(4B)', 'Idefics3(8B)', 'ShowO2(7B)', 'DeepSeek-VL2', 'BAGEL-MoT', 'Janus-Pro(7B)'].map(m => (
+              <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-xs border border-blue-200">{m}</span>
+            ))}
+            <span class="px-2.5 py-1 rounded-lg bg-surface-100 text-surface-500 text-xs border border-surface-200">+11 more</span>
           </div>
         </div>
-
-        <!-- Medical Specific -->
-        <div class="card">
+        <div class="card animate-on-scroll" style="animation-delay: 200ms;">
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-xl bg-primary-500/15 flex items-center justify-center">
-              <span class="text-xl">🏥</span>
-            </div>
-            <div>
-              <h3 class="font-semibold">Medical</h3>
-              <p class="text-xs text-surface-500">10 Models</p>
-            </div>
+            <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold">10</div>
+            <h3 class="text-lg font-bold">Medical-Specialized</h3>
           </div>
-          <div class="space-y-2">
-            <div class="flex items-center gap-2 text-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
-              <span class="text-surface-700">UniMedVL</span>
-            </div>
-            <div class="flex items-center gap-2 text-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
-              <span class="text-surface-700">Hulu-Med</span>
-            </div>
-            <div class="flex items-center gap-2 text-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
-              <span class="text-surface-700">Lingshu</span>
-            </div>
-            <div class="flex items-center gap-2 text-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
-              <span class="text-surface-700">MedDr</span>
-            </div>
-            <div class="flex items-center gap-2 text-sm">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
-              <span class="text-surface-700">+ 6 more</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Total Stats -->
-      <div class="mt-12 text-center animate-on-scroll">
-        <div class="inline-flex items-center gap-8 glass-strong rounded-2xl px-8 py-4">
-          <div class="text-center">
-            <div class="text-3xl font-bold text-primary-600">40</div>
-            <div class="text-sm text-surface-500">Total Models</div>
-          </div>
-          <div class="w-px h-12 bg-surface-200"></div>
-          <div class="text-center">
-            <div class="text-3xl font-bold text-accent-600">9</div>
-            <div class="text-sm text-surface-500">Commercial</div>
-          </div>
-          <div class="w-px h-12 bg-surface-200"></div>
-          <div class="text-center">
-            <div class="text-3xl font-bold text-primary-600">21</div>
-            <div class="text-sm text-surface-500">Open General</div>
-          </div>
-          <div class="w-px h-12 bg-surface-200"></div>
-          <div class="text-center">
-            <div class="text-3xl font-bold text-accent-600">10</div>
-            <div class="text-sm text-surface-500">Medical</div>
+          <div class="flex flex-wrap gap-2">
+            {['UniMedVL', 'Hulu-Med(7B)', 'Hulu-Med(14B)', 'Lingshu(7B)', 'Lingshu(32B)', 'HealthGPT-L(14B)', 'MedGemma(4B)', 'HealthGPT-XL(32B)', 'HealthGPT-M(3B)', 'MedGemma(27B)'].map(m => (
+              <span class="px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 text-xs border border-purple-200">{m}</span>
+            ))}
           </div>
         </div>
       </div>
@@ -586,19 +321,13 @@ const base = import.meta.env.BASE_URL;
   <section class="section">
     <div class="container-custom">
       <div class="glass-strong rounded-3xl p-8 md:p-12 text-center animate-on-scroll">
-        <h2 class="text-2xl sm:text-3xl font-bold mb-4">
-          Explore the Full Results
-        </h2>
+        <h2 class="text-2xl sm:text-3xl font-bold mb-4">Explore the Results</h2>
         <p class="text-surface-500 max-w-xl mx-auto mb-8">
-          View detailed performance charts, confusion matrices, and t-SNE visualizations on the Results page.
+          See how 40 MLLMs perform under medical image quality degradations.
         </p>
         <div class="flex flex-wrap justify-center gap-4">
-          <a href={`${base}/results`} class="btn btn-primary">
-            View Results
-          </a>
-          <a href={`${base}/benchmark`} class="btn btn-secondary">
-            Explore Benchmark
-          </a>
+          <a href={`${base}/results`} class="btn btn-primary">View Results</a>
+          <a href={`${base}/examples`} class="btn btn-secondary">View Examples</a>
         </div>
       </div>
     </div>
